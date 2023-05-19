@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>flask배우기</title>
+</head>
+<body>
+    <h3>설치</h3>
+    <section>
+        <p>파이썬 터미널을 열고 pip install flask</p>
+        <article>
+            from flask import Flask
+            app = Flask(__name__)
+
+            @app.route('/')
+            def index():
+                return 'hi'
+
+            app.run()
+        </article>
+        <p>하고app.run(port=5001) 포트번호를 변경할수 있다.</p>
+        <p>app.run(port=5001, debug=True) debug도 넣을수 잇다.</p>
+    </section>
+
+    <h3>2강</h3>
+    <section>
+        from flask import Flask
+        import random 
+
+        app = Flask(__name__)
+
+        @app.route('/')
+        def index():
+            return 'radom: <strong>'+str(random.random())+'</strong>'
+
+        app.run(port=5001, debug=True)
+    </section>
+    <p>랜덤 값에 대해 </p>
+
+    <h3>3강</h3>
+    <section>
+        from flask import Flask
+import random 
+
+app = Flask(__name__)
+
+@app.route('/')
+def index():
+    return 'radom: <strong>'+str(random.random())+'</strong>'
+
+@app.route('/create/')
+def  create():
+        return 'Create'
+
+
+@app.route('/read/1/') 
+def  read():
+        return 'Read 1'
+
+#1처럼 가변적으로 바뀐는 변수를 만드는 게 router
+@app.route ('/read/<id>/') #꺽쇠 <> 는 주소의 파라미터에 이름을 받아준다. 
+def readId(id):
+    print(id)
+    return str(id)
+    
+app.run(port=5001, debug=True)
+
+    </section>
+    <p>주소 값 으로 파라미터로 페이지 보기 </p>
+
+    <!--  -->
+    <h3>4강</h3>
+    <section>
+        
+@app.route('/')
+def index():
+    return '''<!dotype html>
+    <html>
+        <body>
+            <h1><a  href="/">WEB</a></h1>
+            <ol>
+                <li> <a  href="/read/1/">html</a></li>
+                <li> <a  href="/read/2/">css</a></li>
+                <li> <a  href="/read/3/">javascript</a></li>
+            </ol>
+            <h2>welcome</h2>
+            Hello,Web
+        </body>
+    </html>
+    '''
+    </section>
+    <p>새로 업데이트 코드 해주낟. 요 코드는 리스트되어있어 []에 담기 좋다.</p>
+    <!--  -->
+    <h3></h3>
+    <section></section>
+    <p></p>
+    <!--  -->
+    <h3></h3>
+    <section></section>
+    <p></p>
+    <!--  -->
+    <h3></h3>
+    <section></section>
+    <p></p>
+    <!--  -->
+    <h3></h3>
+    <section></section>
+    <p></p>
+</body>
+</html>
