@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>flask배우기</title>
+</head>
+<body>
+    <h3>1강 설치</h3>
+    <section>
+        <p>파이썬 터미널을 열고 pip install flask</p>
+        <article>
+            from flask import Flask
+            app = Flask(__name__)
+
+            @app.route('/')
+            def index():
+                return 'hi'
+
+            app.run()
+        </article>
+        <p>하고app.run(port=5001) 포트번호를 변경할수 있다.</p>
+        <p>app.run(port=5001, debug=True) debug도 넣을수 잇다.</p>
+    </section>
+
+    <h3>2강</h3>
+    <p>랜덤 값에 대해 </p>
+    <section>
+        from flask import Flask
+        import random 
+
+        app = Flask(__name__)
+
+        @app.route('/')
+        def index():
+            return 'radom: <strong>'+str(random.random())+'</strong>'
+
+        app.run(port=5001, debug=True)
+    </section>
+
+
+    <h3>3강</h3>
+    <p>주소 값 으로 파라미터로 페이지 보기 </p>
+    <section>
+        from flask import Flask
+import random 
+
+app = Flask(__name__)
+
+@app.route('/')
+def index():
+    return 'radom: <strong>'+str(random.random())+'</strong>'
+
+@app.route('/create/')
+def  create():
+        return 'Create'
+
+
+@app.route('/read/1/') 
+def  read():
+        return 'Read 1'
+
+#1처럼 가변적으로 바뀐는 변수를 만드는 게 router
+@app.route ('/read/<id>/') #꺽쇠 <> 는 주소의 파라미터에 이름을 받아준다. 
+def readId(id):
+    print(id)
+    return str(id)
+    
+app.run(port=5001, debug=True)
+
+    </section>
+
+
+    <!--  -->
+    <h3>4강</h3>
+    <p>가변적으로 바뀌는 변수를 만드는 게 router</p>
+    <section>
+            from flask import Flask
+            import random 
+            
+            app = Flask(__name__)
+            
+            # @app.route('/')
+            # def index():
+            #     return 'radom: <strong>'+str(random.random())+'</strong>'
+            
+            topics = [
+                {'id':1,'title':'html','body':'htmlis...'},
+                {'id':2,'title':'css','body':'css is...'},
+                {'id':3,'title':'javascript','body':'javascript is...'}
+            ]
+            
+            @app.route('/')
+            def index():# 기본 주소 만들기
+                liTags=''
+                for topic in topics:
+                    # liTags  = liTags+'<li>'+topic['title']+'</li>'
+                    liTags  = liTags + f'<li><a href="/read/{topic["id"]}/">{topic["title"]}</a></li>'
+                return f'''<!dotype html>
+                <html>
+                    <body>
+                        <h1><a  href="/">WEB</a></h1>
+                        <ol>
+                            {liTags}           
+                        </ol>
+                        <h2>welcome</h2>
+                        Hello,Web
+                    </body>
+                </html>
+                '''
+                #<li> <a  href="/read/1/">html</a></li>
+                #<li> <a  href="/read/2/">css</a></li>
+                #<li> <a  href="/read/3/">javascript</a></li>
+            
+            @app.route('/create/') 
+            def  create(): #create주소로 들어갈 경우
+                    return 'Create'
+            
+            
+            @app.route('/readtest/1/') 
+            def  read():
+                    return 'Read 1'
+            
+            #1처럼 가변적으로 바뀌는 변수를 만드는 게 router
+            @app.route ('/read/<id>/') #꺽쇠 <> 는 주소의 파라미터에 이름을 받아준다. 
+            def readId(id):
+                print(id)
+                return str(id)
+            
+                
+            app.run(port=5001, debug=True)
+
+    </section>
+    <p>새로 업데이트 코드 해주낟. 요 코드는 리스트되어있어 []에 담기 좋다.</p>
+    <!--  -->
+    <h3>5강</h3>
+    <p>웹 페이지 구현</p>
+    <section>
+        <pre>
+            @app.route('/')
+            def index():# 기본 주소로 들어갈 경우
+                return f'''<!dotype html>
+                <html>
+                    <body>
+                        <h1><a  href="/">WEB</a></h1>
+                        <ol>
+                            <li> <a  href="/read/1/">html</a></li>
+                            <li> <a  href="/read/2/">css</a></li>
+                            <li> <a  href="/read/3/">javascript</a></li>         
+                        </ol>
+                        <h2>welcome</h2>
+                        Hello,Web
+                    </body>
+                </html>
+                '''
+        </pre>
+        <p>html코드 넣기</p>
+        <p>반복되는 li지우고  liTages 라는 토픽 넣기</p>
+        <p>유의 : f스트링 알기 보다 간편하게 쓸수 있다. </p>
+        <pre>
+            topics = [
+                {'id':1,'title':'html','body':'htmlis...'},
+                {'id':2,'title':'css','body':'css is...'},
+                {'id':3,'title':'javascript','body':'javascript is...'}
+            ]
+            @app.route('/')
+                def index():# 기본 주소로 들어갈 경우
+                    liTags=''
+                    for topic in topics:
+                        # liTags  = liTags+'<li>'+topic['title']+'</li>'
+                        liTags  = liTags + f'<li><a href="/read/{topic["id"]}/">{topic["title"]}</a></li>'
+                    return f'''<!dotype html>
+                    <html>
+                        <body>
+                            <h1><a  href="/">WEB</a></h1>
+                            <ol>
+                                {liTags}           
+                            </ol>
+                            <h2>welcome</h2>
+                            Hello,Web
+                        </body>
+                    </html>
+                    '''
+                    #<li> <a  href="/read/1/">html</a></li>
+                    #<li> <a  href="/read/2/">css</a></li>
+                    #<li> <a  href="/read/3/">javascript</a></li>
+
+
+                    @app.route ('/read/<id>/') 
+                        def readId(id):
+                            return str(id)
+                        app.run(port=5001, debug=True)
+
+                    
+        </pre>
+        <p>각li 들을 클릭하면 각페이지당 나오는 주소마다 있는 id 값 (1,2,3)이 출력된 화면이 나온다.</p>
+    </section>
+    <p></p>
+    <!--  -->
+    <h3>6강</h3>
+    <p>읽기</p>
+    <section>
+        
+    </section>
+    <p></p>
+    <!--  -->
+    <h3></h3>
+    <section></section>
+    <p></p>
+    <!--  -->
+    <h3></h3>
+    <section></section>
+    <p></p>
+</body>
+</html>
