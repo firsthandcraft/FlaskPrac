@@ -17,6 +17,7 @@ def template(contents,content,id=None):
     ContextUI = ''  
     if id !=None:
         ContextUI = f'''
+            
             <li><a href="/update/{id}">update</a></li>
             <li><form action="/delete/{id}"  method="POST"><input type="submit" value="delete"></form></li>
         '''
@@ -24,6 +25,9 @@ def template(contents,content,id=None):
     <html>
         <body>
             <h1><a  href="/">WEB</a></h1>
+            <h2><a  href="/first">first</a></h2>
+            
+            
             <ol>
                 {contents}           
             </ol>
@@ -48,10 +52,14 @@ def getContents():
 #     return 'radom: <strong>'+str(random.random())+'</strong>'
 @app.route('/')
 def index():# 기본 주소로 들어갈 경우
-    liTags=''
-    for topic in topics:
-        # liTags  = liTags+'<li>'+topic['title']+'</li>' ### 요 내용이 아래의 문장으로
-        liTags  = liTags + f'<li><a href="/read/{topic["id"]}/">{topic["title"]}</a></li>'
+     #return 문 더 줄이기  getcontents 함수를 만들었다.  
+    return template(getContents(),'<h2>Welcome</h2>Hello, WEB <h2><a  href="/first">first</a></h2>')
+    # liTags=''
+    # for topic in topics:
+    #     # liTags  = liTags+'<li>'+topic['title']+'</li>' ### 요 내용이 아래의 문장으로
+    #     liTags  = liTags + f'<li><a href="/read/{topic["id"]}/">{topic["title"]}</a></li>'
+    #위 코드를 getcontents 함수로 만들기 
+    
     # return f'''<!dotype html>
     # <html>
     #     <body>
@@ -64,16 +72,26 @@ def index():# 기본 주소로 들어갈 경우
     #     </body>
     # </html>
     # '''
-    #위의 리턴과 html구문이 상단의 template 함수가 만들어지고 
-    return template(liTags,'<h2>Welcome</h2>Hello,WEB')
+    #위의 리턴과 html구문이 상단의 template 함수가 만들어지면 아래 코드로 return
+    # return template(liTags,'<h2>Welcome</h2>Hello,WEB')
 
-    #<li> <a  href="/read/1/">html</a></li>
-    #<li> <a  href="/read/2/">css</a></li>
-    #<li> <a  href="/read/3/">javascript</a></li> #{liTags}가 만들어져서 li태그는 생략됨ㄴ
+    #바로 위 코드에 {liTags}가 만들어져서 li태그는 생략됨
+    # <li> <a  href="/read/1/">html</a></li>
+    # <li> <a  href="/read/2/">css</a></li>
+    # <li> <a  href="/read/3/">javascript</a></li> 
+    
+   
 
 @app.route('/readtest/1/') 
 def  read():#readtest/1/로 들어갈 경우
         return 'Read 1'
+# @app.route('/readtest/2/') 
+# def first():
+#     directory = os.path.dirname(os.path.abspath(__file__))  # 현재 파일의 디렉터리 경로
+#     filename = 'first.html'
+#     return send_from_directory(directory, filename)
+#html파일을 로딩하려면 jina템플릿이 잇어야된다.
+
 ###################################
 #읽기
 # @app.route ('/read/<id>/') 
@@ -108,7 +126,7 @@ def readId(id):#<id>는 여기 파라미터 값으로 자리에 들어오는 값
     #                 <ol>
     #                     {liTags}
     #                 </ol>
-    #                 <h2>{title}}</h2>
+    #                 <h2>{title}</h2>
     #                 {body}
     #         </body>
     #     </html>
@@ -116,7 +134,7 @@ def readId(id):#<id>는 여기 파라미터 값으로 자리에 들어오는 값
  
       
 ###################################
-#만들기
+# 수정 form만들기#request, redirect import하기
 @app.route('/create/', methods=['GET','POST'])
 def  create():#create주소로 들어갈 경우
     #request.method# 상단에 request import 하기
@@ -131,7 +149,7 @@ def  create():#create주소로 들어갈 경우
         '''
         return template(getContents(),content)
     elif request.method == 'POST':
-        global nextId
+        global nextId #전역변수 가져오기
         title = request.form['title']
         body = request.form['body']
         newTopic = {'id':nextId,'title':title,'body':body}

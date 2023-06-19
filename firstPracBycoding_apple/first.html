@@ -199,18 +199,228 @@ app.run(port=5001, debug=True)
     <p></p>
     <!--  -->
     <h3>6강</h3>
+    <p>함수만들기</p>
+    <section>
+        <p>처음 인덱스 페이지</p>
+        <pre>
+            @app.route('/')
+            def index():# 기본 주소로 들어갈 경우
+                liTags=''
+                for topic in topics:
+                    # liTags  = liTags+'<li>'+topic['title']+'</li>' ### 요 내용이 아래의 문장으로
+                    liTags  = liTags + f'<li><a href="/read/{topic["id"]}/">{topic["title"]}</a></li>'
+                # return f'''<!dotype html>
+                # <html>
+                #     <body>
+                #         <h1><a  href="/">WEB</a></h1>
+                #         <ol>
+                #             {liTags}           
+                #         </ol>
+                #         <h2>welcome</h2>
+                #         Hello,Web
+                #     </body>
+                # </html>
+                # '''
+                #위의 리턴과 html구문이 상단의 template 함수가 만들어지고 
+                return template(liTags,'<h2>Welcome</h2>Hello,WEB')
+
+                <b>return template 를 해서 상단에 템플릿 함수를 만들어줘야한다.</b>
+                #함수 만들기
+                # 템플릿으로 만들어도 된다.
+                def template(contents,content,id=None):
+                    ContextUI = ''  
+                    if id !=None:
+                        ContextUI = f'''
+                            <li><a href="/update/{id}">update</a></li>
+                            <li><form action="/delete/{id}"  method="POST"><input type="submit" value="delete"></form></li>
+                        '''
+                    return f'''<!dotype html>
+                    <html>
+                        <body>
+                            <h1><a  href="/">WEB</a></h1>
+                            <ol>
+                                {contents}           
+                            </ol>
+                                {content}
+                            <ul>
+                                <li><a href="/create/">create</a></li>
+                                {ContextUI}
+                            </ul>
+                        </body>
+                    </html>
+                    '''
+        </pre>
+    </section>
     <p>읽기</p>
     <section>
-        
+        <pre>
+        @app.route ('/read/<int:id>/') #꺽쇠 <> 는 주소의 파라미터에 이름을 받아준다. 
+        def readId(id):#<id>는 여기 파라미터 값으로 자리에 들어오는 값이  꺽쇠 이름의 파라미터로 들어온다.
+            # print(id) 하면 값이 스트링으로 나온다. 아이디 값을 int로 컴퍼팅해줘도 되고 혹은 상단 route 부분에 int:id로 넣어줘도 된다.
+             liTags =''
+             for topic in topics:
+                 liTags = liTags +f'<li><a href="/read/{topic["id"]}/">{topic["title"]}</a></li>'
+            
+            #topics 조회하기 
+            title=''
+            body=''
+
+            for topic in topics:
+                if id == topic['id']:
+                    title = topic['title']
+                    body = topic['body']
+                    break
+                #print(title, body)
+
+             return f'''<!doctype html>
+                 <html>
+                     <body>
+                         <h1><a href="/">WEB</a></h1>
+                             <ol>
+                                 {liTags}
+                             </ol>
+                             <h2>{title}</h2>
+                             {body}
+                     </body>
+                 </html>
+                 '''   
+            </pre>
+            <p>template 함수 만들어준거 대입하기 -->코드줄이기</p>
+            <pre>
+
+                @app.route ('/read/<int:id>/')
+                def readId(id):
+                   
+                    title=''
+                    body=''
+                    for topic in topics:
+                        if id == topic['id']:
+                            title = topic['title']
+                            body = topic['body']
+                            break
+                        #print(title, body)
+                    return template(getContents(),f'<h2>{title}</h2>{body}',id)
+                   
+            </pre>
+            <p>html 문 반복 줄이기 -> template </p>
+            <pre>
+                def template(contents,content,id=None):
+                    ContextUI = ''  
+                    if id !=None:
+                        ContextUI = f'''
+                            <li><a href="/update/{id}">update</a></li>
+                            <li><form action="/delete/{id}"  method="POST"><input type="submit" value="delete"></form></li>
+                        '''
+                    return f'''<!dotype html>
+                    <html>
+                        <body>
+                            <h1><a  href="/">WEB</a></h1>
+                            <ol>
+                                {contents}           
+                            </ol>
+                                {content}
+                            <ul>
+                                <li><a href="/create/">create</a></li>
+                                {ContextUI}
+                            </ul>
+                        </body>
+                    </html>
+                    '''
+            </pre>
+            <p>for 문 반복 줄이기 -> getContents함수 </p>
+            <pre>
+                def getContents():
+                    liTags=''
+                    for topic in topics:
+                        liTags  = liTags + f'<li><a href="/read/{topic["id"]}/">{topic["title"]}</a></li>'
+                    return liTags
+            </pre>
+    </section>
+    <!--  -->
+    <h3>7강</h3>
+    <p>쓰기</p>
+    <section>
+        <pre>
+            # 수정 form만들기
+            #request import하기
+            @app.route('/create/', methods=['GET','POST'])
+            def  create():#create주소로 들어갈 경우
+                #request.method# 상단에 request import 하기
+                #print('request.method===',request.method)
+                if request.method == 'GET':
+                    content  ='''
+                        <form action="/create/" method="POST">
+                            <p><input type="text" name="title" placeholder="title"></p>
+                            <p><textarea placeholder="body" name="body"></textarea></p>
+                            <p><input type="submit" value="create"></p>
+                        </form>
+                    '''
+                    return template(getContents(),content)
+                elif request.method == 'POST':
+                    global nextId
+                    title = request.form['title']
+                    body = request.form['body']
+                    newTopic = {'id':nextId,'title':title,'body':body}
+                    topics.append(newTopic)
+                    url ='/read/'+str(nextId)+'/'
+                    nextId += 1
+                    # return title+','+body
+                    return redirect(url)
+        </pre>
+        <p>
+            #변수 만들기
+            nextId = 4  # 마지막 id 값이 3이라서 
+            topics = [
+                {'id':1,'title':'html','body':'htmlis...'},
+                {'id':2,'title':'css','body':'css is...'},
+                {'id':3,'title':'javascript','body':'javascript is...'}  
+            ]
+        </p>
     </section>
     <p></p>
     <!--  -->
-    <h3></h3>
-    <section></section>
+    <h3>8강 수정</h3>
+    <section>
+        <pre>
+        # 수정 form만들기#request, redirect import하기
+        @app.route('/create/', methods=['GET','POST'])
+        def  create():#create주소로 들어갈 경우
+            #request.method# 상단에 request import 하기
+            #print('request.method===',request.method)
+            if request.method == 'GET':
+                content  ='''
+                    <form action="/create/" method="POST">
+                        <p><input type="text" name="title" placeholder="title"></p>
+                        <p><textarea placeholder="body" name="body"></textarea></p>
+                        <p><input type="submit" value="create"></p>
+                    </form>
+                '''
+                return template(getContents(),content)
+            elif request.method == 'POST':
+                global nextId #전역변수 가져오기
+                title = request.form['title']
+                body = request.form['body']
+                newTopic = {'id':nextId,'title':title,'body':body}
+                topics.append(newTopic)
+                url ='/read/'+str(nextId)+'/'
+                nextId += 1
+                # return title+','+body
+                return redirect(url)
+        </pre>
+    </section>
     <p></p>
-    <!--  -->
-    <h3></h3>
-    <section></section>
-    <p></p>
+        <!--  -->
+        <h3>9강 삭제</h3>
+        <section>
+            <pre>#삭제
+                @app.route('/delete/<int:id>/', methods=['POST'])
+                def  delete(id):
+                    for topic in topics:
+                        if id ==topic['id']:
+                            topics.remove(topic)
+                            break
+                    return redirect('/')</pre>
+        </section>
+        <p>https://www.youtube.com/watch?v=3N5XHl8EE78&list=PLuHgQVnccGMClNOIuT3b3M4YZjxmult2y&index=11</p>
 </body>
 </html>
